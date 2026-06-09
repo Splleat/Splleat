@@ -1,5 +1,7 @@
 # 강병호
 
+데이터 정합성과 시스템 안정성에 관심이 많은 백엔드 개발자입니다.
+
 **Java Backend**
 
 ---
@@ -10,163 +12,67 @@
 ![Spring Boot](https://img.shields.io/badge/SpringBoot-6DB33F?style=flat-square&logo=springboot&logoColor=white)
 ![Spring Data JPA](https://img.shields.io/badge/SpringDataJPA-6DB33F?style=flat-square&logo=spring&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![Maven](https://img.shields.io/badge/Maven-C71A36?style=flat-square&logo=apache-maven&logoColor=white)
 
 ---
 
 ## Experience
+
 ### NHN Academy Java Backend 개발자 과정 12기
-**2025.07.28** ~ **2025.12.31**
+**2025.07.28** ~ **2025.12.31** 수료
 
 ---
 
 ## Projects
-### MSA 기반 온라인 서점 'Trillion'
-**2025.11.11 ~ 2025.12.31**
 
-**담당 역할**: 주문(Order) 도메인 설계 및 분산 트랜잭션 아키텍처 구축
+### Relay - 실시간 메신저 서버
+**2026.03.30** ~ 진행 중 | 개인 프로젝트
+
+실시간 메신저 서버입니다. JWT 기반 인증, 그룹/채널 기반 구조, STOMP 기반 실시간 메시지 송수신, 커서 기반 양방향 페이징을 구현했습니다. 
+
+프론트엔드는 Next.js + TypeScript로 구현하여 백엔드와 연동했습니다.
+
+**기술 스택**: Java 25, Spring Boot 4, Spring Data JPA, QueryDSL, MySQL, Redis, WebSocket/STOMP, Testcontainers
 
 #### Repository
-* **[Trillion Repository](https://github.com/nhnacademy-be12-trillion)**
-* **[주문(Order) Repository](https://github.com/nhnacademy-be12-trillion/order/tree/dev)**
+* **[Front-end](https://github.com/Splleat/Messenger-Front)**
+* **[Back-end](https://github.com/Splleat/Messenger-Project)**
 
-#### 기술적 의사결정
-1.  **Saga Pattern 기반의 분산 트랜잭션 처리**
-    *   **문제:** 각 서비스가 DB를 따로 가지는(Database per Service) MSA 환경에서는 단일 트랜잭션(ACID)을 사용할 수
-       없음.
-    *   **해결:** **Orchestration Saga Pattern**을 도입하여, `재고 차감` → `쿠폰 적용` → `포인트 사용`으로 이어지는
-        복잡한 비즈니스 흐름의 데이터 정합성을 보장.
-    <details>
-    <summary>[주문 생성 다이어그램]</summary>
-    
-    ```mermaid
-    sequenceDiagram
-    autonumber
-    participant Order as 주문 서비스
-    box 외부 서비스
-    participant Book as 도서 서비스
-    participant Coupon as 쿠폰 서비스
-    participant Member as 회원 서비스
-    end
-        
-        Note over Order, Member: [Step 1] 재고 처리
-        rect rgba(0, 255, 0, 0.1)
-            Order->>Book: 재고 차감 요청
-        end
-        
-        alt 재고 차감 실패
-            rect rgba(255, 0, 0, 0.1)
-                Book-->>Order: 에러 응답 (4xx/5xx)
-                Order->>Book: 재고 복구
-                Note over Order: 주문 실패
-            end
-        else
-            Note over Order, Member: [Step 2] 쿠폰 처리
-            rect rgba(0, 255, 0, 0.1)
-                Order->>Coupon: 쿠폰 적용 요청
-            end
-        
-            alt 쿠폰 적용 실패
-                rect rgba(255, 0, 0, 0.1)
-                    Coupon-->>Order: 에러 응답 (4xx/5xx)
-                    Order->>Coupon: 쿠폰 취소
-                    Order->>Book: 재고 복구
-                    Note over Order: 주문 실패
-                end
-            else
-                Note over Order, Member: [Step 3] 포인트 처리
-                rect rgba(0, 255, 0, 0.1)
-                    Order->>Member: 포인트 사용 요청
-                end
-        
-                alt 포인트 사용 실패
-                    rect rgba(255, 0, 0, 0.1)
-                        Member-->>Order: 에러 응답 (4xx/5xx)
-                        Order->>Member: 포인트 환불
-                        Order->>Coupon: 쿠폰 취소
-                        Order->>Book: 재고 복구
-                        Note over Order: 주문 실패
-                    end
-                else
-                    Note over Order: 주문 생성 완료
-                end
-            end
-        end
-    ```
-    </details>
-2.  **데이터 정합성을 위한 자가 치유 시스템**
-    *   **문제:** 서버 장애 시 중단된 트랜잭션으로 인한 데이터 불일치 발생.
-    *   **해결:** **ShedLock** 기반의 보정 스케줄러를 구현하여, 인프라 복잡도는 낮추면서도 중단된 사가(Saga)를 자동으로 복구하도록 설계.
-    <details>
-    <summary>[스케줄러 로직 흐름도]</summary>
+### 주요 기술적 의사결정
 
-    ```mermaid
-    flowchart TD
-    subgraph Scheduler["Reconciliation Scheduler (5분 주기)"]
-    direction TB
-    
-            subgraph Loop1 ["1. 멈춘 사가 처리"]
-                Start1("사가 조회<br/>(Status: PROGRESS / FAILED)") --> IsCreate1{"주문 생성인가?"}
-                IsCreate1 -- Yes --> ActionRollback1["보상 (Rollback)"]:::rollback
-                IsCreate1 -- "No (취소/반품)" --> ActionRetry["재시도 (Retry)"]:::retry
-            end
-    
-            subgraph Loop2 ["2. 도메인 미반영 사가 처리"]
-                Start2("사가 조회<br/>(Status: COMPLETED + Unbridged)") --> IsCreate2{"주문 생성인가?"}
-                IsCreate2 -- Yes --> ActionRollback2["보상 (Rollback)"]:::rollback
-                IsCreate2 -- "No (취소/반품)" --> ActionBridge["동기화 (Bridge)"]:::bridge
-            end
-    
-            subgraph Loop3 ["3. 미결제 장기 대기 주문 처리"]
-                Start3("주문 조회<br/>(Status: PENDING + 1시간 경과)") --> FindSaga{"사가 존재 여부"}
-                FindSaga -- "있음" --> ActionRollback3["보상 (Rollback)"]:::rollback
-                FindSaga -- "없음 (유실)" --> ActionLog["처리 불가 -> 에러 로깅<br/>(Manual Check)"]:::alert
-            end
-            
-            Loop1 ~~~ Loop2 ~~~ Loop3
-        end
-    
-        classDef rollback fill:#f8d7da,stroke:#721c24,color:#721c24,stroke-width:2px;
-        classDef retry fill:#fff3cd,stroke:#856404,color:#856404,stroke-width:2px;
-        classDef bridge fill:#d1ecf1,stroke:#0c5460,color:#0c5460,stroke-width:2px;
-        classDef safe fill:#d4edda,stroke:#155724,color:#155724,stroke-width:2px;
-        classDef alert fill:#f8d7da,stroke:#721c24,color:#721c24,stroke-width:2px,stroke-dasharray: 5 5;
-    ```
-    </details>
-3.  **장애 전파 차단**
-    *   **문제:** HTTP 기반의 동기 통신(FeignClient) 환경에서 외부 서비스의 장애나 응답 지연 발생 시, 요청 스레드가 무한정 대기하며 스레드 풀(Thread Pool)이 고갈되어 주문 서비스 전체가 마비되는 연쇄 장애(Cascading Failure) 위험 노출.
-    *   **해결:**
-        1. **타임아웃(Timeout):** 연결(2초) 및 읽기(5초) 타임아웃을 짧게 설정하여 지연 발생 시 즉각 리소스를 반환하도록 튜닝.
-        2. **재시도(Retry):** 일시적인 네트워크 깜빡임(Transient Fault)은 멱등성이 보장되게 설계된 API를 최대 3회(최초 시도 1회 + 재시도 2회) 재시도하여 가용성 확보.
-        3. **서킷 브레이커(Circuit Breaker):** 반복적인 실패나 지연 감지 시 즉시 요청을 차단(Open)하고 빠른 실패(Fail-Fast)를 반환하여 장애 전파로부터 시스템을 보호.
-    <details>
-    <summary>[Retry와 Circuit Breaker 흐름]</summary>
-
-    ```mermaid
-    sequenceDiagram
-    participant Client
-    participant Service as 주문 서비스
-    participant External as 외부 서비스
-    
-        Client->>Service: 요청
-        Service->>External: 1차 시도 (실패)
-        Note over Service: Retry 대기 (1s)
-        Service->>External: 2차 시도 (실패)
-        Note over Service: Retry 대기 (1s)
-        Service->>External: 3차 시도 (실패)
-        
-        Note over Service: 3회 모두 실패 -> Circuit Breaker에 '1회 실패' 기록
-        Service-->>Client: Fallback 응답
-        
-        Note over Service: 실패 누적으로 임계치 초과 시 -> 서킷 OPEN
-    ```
-    </details>    
+1. **TSID 도입** - Auto Increment의 분산 DB 한계 문제와 UUIDv4의 인덱스 성능 문제, UUIDv7의 인덱스 크기 문제를 검토한 끝에 DB BIGINT와 호환이 가능한 TSID 선택. 도입 과정에서 발생한 JPA `save()` 동작 문제와 JS `number` 정밀도 문제를 해결
+2. **JWT + Redis Blacklist**: Stateless 특성 때문에 JWT를 선택했지만 로그아웃 구현 과정에서 모순을 체감하고 세션 방식과 실질적인 트레이드오프를 비교
+3. **커서 기반 양방향 페이징**: TSID의 시간 정렬 특성을 활용해 과거 / 최신 메시지 페이징과 채널 입장 메시지 조회를 `(channel_id, id)` 복합 인덱스로 구현
 
 #### 문서
-*   [분산 트랜잭션과 Saga Pattern 설계](https://github.com/nhnacademy-be12-trillion/order/blob/dev/docs/wiki/Saga-Pattern.md)
-*   [데이터 정합성 복구를 위한 스케줄링 전략](https://github.com/nhnacademy-be12-trillion/order/blob/dev/docs/wiki/Scheduling.md)
-*   [장애 전파 차단과 Resilience4j 설정 전략](https://github.com/nhnacademy-be12-trillion/order/blob/dev/docs/wiki/Resilience4j.md)
+* [JWT는 정말로 Stateless한가?](https://github.com/Splleat/Messenger-Project/blob/dev/docs/01-jwt-stateless.md)
+* [TSID를 도입하며 만난 예상치 못한 문제들](https://github.com/Splleat/Messenger-Project/blob/dev/docs/02-db-pk.md)
+* [커서 기반 양방향 페이징 설계](https://github.com/Splleat/Messenger-Project/blob/dev/docs/03-paging-strategy.md)
 
+### MSA 기반 온라인 서점 'Trillion'
+**2025.11.11 ~ 2025.12.31** | 팀 프로젝트 (주문 도메인 담당)
+
+8인 팀 프로젝트로, 주문 도메인 설계 및 분산 트랜잭션 설계를 담당했습니다.
+
+**기술 스택**
+
+Java, Spring Boot, Spring Data JPA, MySQL, OpenFeign, Resilience4j
+
+#### Repository
+* **[Trillion](https://github.com/nhnacademy-be12-trillion)**
+* **[주문 서비스](https://github.com/Splleat/Trillion-Order)**
+
+### 주요 기술적 의사결정
+
+1. **Orchestration Saga 패턴**: Database per Service 환경에서 도서 재고/쿠폰/포인트 서비스에 걸친 분산 트랜잭션 정합성 보장. 주문 생성 실패 시 롤백, 주문 취소는 재시도로 비즈니스 성격에 따라 이원화
+2. **보정 스케줄러 + ShedLock**: 서버 장애로 중단된 사가 트랜잭션을 자동 복구하는 시스템 구현. Redis 없이 기존 RDB만으로 분산 락 구현
+3. **Resilience4j 서킷 브레이커**: 외부 서비스 장애의 연쇄 전파 차단. Retry -> Circuit Breaker 순서로 적용하여 일시적 장애와 지속적 장애를 분리해서 대응
+
+#### 문서
+*   [분산 트랜잭션과 Saga Pattern 설계](https://github.com/Splleat/Trillion-Order/blob/main/docs/wiki/01-saga-pattern.md)
+*   [보상 트랜잭션은 어떻게 보상하나 - Saga 보상 스케줄러 설계](https://github.com/Splleat/Trillion-Order/blob/main/docs/wiki/02-scheduling.md)
 
 ---
 
