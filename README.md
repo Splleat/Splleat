@@ -68,7 +68,6 @@ Java, Spring Boot, Spring Data JPA, MySQL, OpenFeign, Resilience4j
 
 1. **Orchestration Saga 패턴**: Database per Service 환경에서 도서 재고/쿠폰/포인트 서비스에 걸친 분산 트랜잭션 정합성 보장. 주문 생성 실패 시 롤백, 주문 취소는 재시도로 비즈니스 성격에 따라 이원화
 2. **보정 스케줄러 + ShedLock**: 서버 장애로 중단된 사가 트랜잭션을 자동 복구하는 시스템 구현. Redis 없이 기존 RDB만으로 분산 락 구현
-3. **Resilience4j 서킷 브레이커**: 외부 서비스 장애의 연쇄 전파 차단. Retry -> Circuit Breaker 순서로 적용하여 일시적 장애와 지속적 장애를 분리해서 대응
 
 #### 문서
 *   [분산 트랜잭션과 Saga Pattern 설계](https://github.com/Splleat/Trillion-Order/blob/main/docs/wiki/01-saga-pattern.md)
