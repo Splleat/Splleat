@@ -36,6 +36,9 @@
 
 **기술 스택**: Java 25, Spring Boot 4, Spring Data JPA, QueryDSL, MySQL, Redis, WebSocket/STOMP, Testcontainers
 
+#### 도메인
+* **[Messenger Server](https://www.splleat.com/)**
+
 #### Repository
 * **[Front-end](https://github.com/Splleat/Messenger-Front)**
 * **[Back-end](https://github.com/Splleat/Messenger-Project)**
