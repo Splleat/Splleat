@@ -63,6 +63,9 @@
 
 Java, Spring Boot, Spring Data JPA, MySQL, OpenFeign, Resilience4j
 
+#### 도메인
+* **[Trillion-book](https://trillion-book.shop/)**
+
 #### Repository
 * **[Trillion](https://github.com/nhnacademy-be12-trillion)**
 * **[주문 서비스](https://github.com/Splleat/Trillion-Order)**
