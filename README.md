@@ -34,7 +34,7 @@
 
 프론트엔드는 Next.js + TypeScript로 구현하여 백엔드와 연동했습니다.
 
-**기술 스택**: Java 25, Spring Boot 4, Spring Data JPA, QueryDSL, MySQL, Redis Pub/Sub, WebSocket/STOMP, Testcontainers
+**기술 스택**: Java 25, Spring Boot 4, Spring Data JPA, QueryDSL, MySQL, Redis Pub/Sub, WebSocket/STOMP, Testcontainers, TypeScript, React 19, Next.js 16
 
 #### 도메인
 * **[Messenger Server](https://www.splleat.com/)**
