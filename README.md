@@ -45,13 +45,13 @@ Spring 기반 서비스를 직접 설계하고 운영 환경까지 구축하며,
 
 ### 주요 기술적 의사결정
 
-1. **TSID 도입** - Auto Increment, UUIDv4, UUIDv7을 ID 생성 방식, 정렬 특성, 인덱스 효율, 저장 공간 관점에서 비교한 뒤 DB BIGINT와 호환되면서 시간 순 정렬이 가능한 TSID를 선택. 도입 과정에서 발생한 JPA save() 동작 문제와 JavaScript number 정밀도 문제를 해결
+1. **TSID 도입** - Auto Increment, UUIDv4, UUIDv7을 ID 생성 방식, 정렬 특성, 인덱스 효율, 저장 공간 관점에서 비교한 뒤 DB BIGINT와 호환되면서 시간 순 정렬이 가능한 TSID를 선택. 도입 과정에서 발생한 JPA save() 추가 SELECT 쿼리 문제와 JavaScript number 정밀도 문제를 해결
 2. **JWT + Redis Blacklist**: JWT의 Stateless 특성과 로그아웃 요구사항 사이의 트레이드오프를 분석하고 Redis Blacklist를 적용
 3. **커서 기반 양방향 페이징**: TSID의 시간 정렬 특성을 활용해 (channel_id, id) 복합 인덱스 기반의 메시지 조회 및 양방향 커서 페이징 구현
 
 #### 문서
 * [JWT는 정말로 Stateless한가?](https://github.com/Splleat/Messenger-Project/blob/dev/docs/01-jwt-stateless.md)
-* [TSID를 도입하면서 마주친 JPA Persist 전략과 JavaScript 정밀도 문제](https://github.com/Splleat/Messenger-Project/blob/dev/docs/02-db-pk.md)
+* [TSID를 도입하면서 마주친 JPA save 전략과 JavaScript 정밀도 문제](https://github.com/Splleat/Messenger-Project/blob/dev/docs/02-db-pk.md)
 * [커서 기반 양방향 페이징 설계](https://github.com/Splleat/Messenger-Project/blob/dev/docs/03-paging-strategy.md)
 
 ### MSA 기반 온라인 서점 'Trillion'
