@@ -14,12 +14,12 @@
 ![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazonwebservices&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHubActions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
 
-| 프로젝트               | 소개                     | 역할               |                                                                                       |
-|--------------------|------------------------|------------------|---------------------------------------------------------------------------------------|
-| **Trillion**       | MSA 온라인 서점 · 8인 팀      | 주문 도메인과 분산 트랜잭션  | [저장소](https://github.com/Splleat/Trillion-Order)                                      |
-| **Relay (Java)**   | 실시간 메신저 · 개인           | 설계부터 프론트엔드와 배포까지 | [서비스](https://www.splleat.com/) · [저장소](https://github.com/Splleat/Messenger-Project) |
-| **iUnoT**          | MSA 의약품 재고관리 · 8인 팀    | 인프라, 배포, 모니터링    | [저장소](https://github.com/nhnacademy-aiot3-iUnoT)                                      |
-| **Relay (Kotlin)** | 메신저 중심 협업툴 · 개인 · 진행 중 | 백엔드와 React 프론트엔드 | [저장소](https://github.com/Splleat/relay)                                               |
+| 프로젝트               | 소개                     | 역할               |                                                                             |
+|--------------------|------------------------|------------------|-----------------------------------------------------------------------------|
+| **Trillion**       | MSA 온라인 서점 · 8인 팀      | 주문 도메인과 분산 트랜잭션  | [저장소](https://github.com/Splleat/Trillion-Order)                            |
+| **Relay (Java)**   | 실시간 메신저 · 개인           | 설계부터 프론트엔드와 배포까지 | [저장소](https://github.com/Splleat/Messenger-Project)                         |
+| **iUnoT**          | MSA 의약품 재고관리 · 8인 팀    | 인프라, 배포, 모니터링    | [저장소](https://github.com/nhnacademy-aiot3-iUnoT)                            |
+| **Relay (Kotlin)** | 메신저 중심 협업툴 · 개인 · 진행 중 | 백엔드와 React 프론트엔드 | [서비스](https://relay.splleat.com/) · [저장소](https://github.com/Splleat/relay) |
 
 ---
 
@@ -34,7 +34,7 @@
 - Saga 패턴 기반 주문 흐름 설계
 - 중단된 주문을 자동으로 복구하는 복구 스케줄러 구현
 
-**문서** · [분산 트랜잭션과 Saga 패턴 설계](https://github.com/Splleat/Trillion-Order/blob/main/docs/wiki/01-saga-pattern.md) · [보상 트랜잭션은 어떻게 보상하나](https://github.com/Splleat/Trillion-Order/blob/main/docs/wiki/02-scheduling.md)
+**문서** [MSA에서의 분산 트랜잭션과 사가 패턴 적용기](https://github.com/Splleat/Trillion-Order/blob/main/docs/wiki/01-saga-pattern.md) · [보상 트랜잭션은 어떻게 보상하나?](https://github.com/Splleat/Trillion-Order/blob/main/docs/wiki/02-scheduling.md)
 
 **기술** Java/Spring, Spring Data JPA, MySQL, OpenFeign, Resilience4j, ShedLock
 
@@ -57,7 +57,7 @@
 - Next.js 기반 프론트엔드 구현 및 연동
 - AWS 배포
 
-**문서** · [JWT는 정말로 Stateless한가?](https://github.com/Splleat/Messenger-Project/blob/dev/docs/01-jwt-stateless.md) · [TSID를 도입하며 만난 예상치 못한 문제들](https://github.com/Splleat/Messenger-Project/blob/dev/docs/02-db-pk.md) · [커서 기반 양방향 페이징 설계](https://github.com/Splleat/Messenger-Project/blob/dev/docs/03-paging-strategy.md)
+**문서** · [JWT는 정말로 Stateless한가?](https://github.com/Splleat/Messenger-Project/blob/dev/docs/01-jwt-stateless.md) · [TSID를 도입하며 만난 JPA 영속성 전략과 JavaScript 정밀도 문제](https://github.com/Splleat/Messenger-Project/blob/dev/docs/02-db-pk.md)
 
 **기술** Java/Spring, Spring Data JPA, QueryDSL, MySQL, Redis, WebSocket/STOMP, Testcontainers, TypeScript, Next.js/React, AWS (EC2, RDS, S3)
 
